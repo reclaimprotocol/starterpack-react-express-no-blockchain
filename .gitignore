@@ -1,2 +1,3 @@
-backend/node_modules/
+backend-express/node_modules/
+backend-express/.env
 frontend-react/node_modules/
