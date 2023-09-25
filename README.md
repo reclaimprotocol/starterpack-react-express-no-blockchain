@@ -28,3 +28,5 @@ Though this step is optional, we recommend using ngrok so that your local host s
 1. `cd frontend-react`
 2. `npm start`
 
+Open `localhost:3000` on your browser
+
