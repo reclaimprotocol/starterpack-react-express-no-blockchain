@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "@reclaimprotocol/reclaim-sdk": "^4.7.1",
+    "@semaphore-protocol/data": "^3.10.1",
+    "@semaphore-protocol/group": "^3.10.1",
+    "@semaphore-protocol/identity": "^3.10.1",
+    "@semaphore-protocol/proof": "^3.10.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.7.1",
+    "express": "^4.18.2",
+    "mongodb": "^5.7.0"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.2",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build": "tsc"
+  }
+}

@@ -2,35 +2,54 @@ import logo from './logo.svg';
 import './App.css';
 import React, { useState } from 'react';
 import axios from 'axios';
-
-import ReactDOM from 'react-dom';
 import QRCode from 'react-qr-code';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
-const BASEURL = "http://localhost:3001";
+const BASEURL = "http://localhost:8000";
+
 function App() {
 
   const [company, setCompany] = useState();
   const [step, setStep] = useState(0);
   const [link, setLink] = useState();
   const [userId, setUserId] = useState();
+  const {address, connector, isConnected} = useAccount();
 
   const makeInterval = async function (uid) {
     const interval = setInterval(async () => {
-      const st = await axios.get(BASEURL + "/status?userId=" + uid);
-      if (st.data.verified == 1) {
+      const proofReceived = await fetchProof()
+      if (proofReceived) {
         clearInterval(interval);
         completeStep1();
       }
-    }, 2000)
+    }, 3000)
   }
 
+  const fetchProof = async () => {
+    try {
+      console.log(`Requesting ${backendProofUrl}?id=${callbackId}`);
+      const response = await fetch(`${backendProofUrl}?id=${callbackId}`);
+      if (response.status === 200) {
+        const proofData = await response.json();
+        setIsProofReceived(true)
+        setProofObj(proofData[0])
+        return true
+      }
+      else return false
+    }
+    catch (error) {
+      setIsProofReceived(false)
+      console.log(error)
+      return false
+    }
+  }
 
   const completeStep0 = async function () {
     const response = await axios.get(BASEURL + "/request-proofs");
     const _link = response.data.reclaimUrl;
     setLink(_link);
     await setUserId(response.data.userId);
-    makeInterval(response.data.userId);
+    // makeInterval(response.data.userId);
     setStep(1)
   }
   const completeStep1 = async function () {
