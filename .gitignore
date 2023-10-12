@@ -1,3 +1,4 @@
 backend/node_modules/
 backend-express/.env
 frontend-react/node_modules/
+cra-frontend/node_modules/

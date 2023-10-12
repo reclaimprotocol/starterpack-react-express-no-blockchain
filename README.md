@@ -20,12 +20,12 @@ Though this step is optional, we recommend using ngrok so that your local host s
 3. run ngrok for port 3001 using `ngrok http 3001` 
 
 ### run backend
-1. `cd backend-express`
+1. `cd backend`
 2. edit .env and set NGROK_BASEURL="<url returned on step 3 above>"
 3. `npm start`
 
 ### run frontend
-1. `cd frontend-react`
+1. `cd frontend`
 2. `npm start`
 
 Open `localhost:3000` on your browser
