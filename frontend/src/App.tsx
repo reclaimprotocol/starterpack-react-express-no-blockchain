@@ -18,11 +18,9 @@ function App() {
   const [company, setCompany] = useState('');
   const [step, setStep] = useState(0);
   const [link, setLink] = useState('');
-  const [userId, setUserId] = useState();
-  const [proofObj, setProofObj] = useState();
   const [identity, setIdentity] = useState<Identity>(new Identity('1'));
-  const { address, connector, isConnected } = useAccount();
-  
+  const { address, isConnected } = useAccount();
+
   const { connect, connectors, isLoading, pendingConnector } = useConnect({
     chainId: 420,
     onError(error: Error) {
@@ -43,12 +41,12 @@ function App() {
 
   
   useContractEvent({
-    address: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    address: '0x003EFcCBe8303d338e944F263a77cBc036Bd9ae8',
     abi: contractABI,
     eventName: 'MyEvent',
     chainId:420,
     listener(log) {
-      console.log(log,'wassssss')
+      console.log(log[0],'event---')
     },
   })
   const makeInterval = async function (callbackId:string) {
@@ -70,7 +68,6 @@ function App() {
       const response = await fetch(`${BASEURL}/get-proofs?id=${callbackId}`);
       if (response.status === 200) {
         const proofData = await response.json();
-        setProofObj(proofData[0])
         localStorage.setItem('fullProof', JSON.stringify(transformProof(proofData[0])))
         console.log('proof fetched successfully', proofData[0])
         return true
