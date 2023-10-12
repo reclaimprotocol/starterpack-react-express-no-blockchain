@@ -3,11 +3,10 @@ import './App.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import QRCode from 'react-qr-code';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useAccount, useConnect, useContractEvent, useDisconnect } from 'wagmi';
 import { Register } from './components/register.component';
 import transformProof from './utils/transformProof';
-import { Airdrop } from './components/airdrop.component';
-import { call } from 'viem/_types/actions/public/call';
+import contractABI from './assets/gcoinABI.json';
 import { Identity } from '@semaphore-protocol/identity';
 
 const BASEURL = "http://localhost:8000";
@@ -23,7 +22,7 @@ function App() {
   const [proofObj, setProofObj] = useState();
   const [identity, setIdentity] = useState<Identity>(new Identity('1'));
   const { address, connector, isConnected } = useAccount();
-  // console.log(identity,'wwwww')
+  
   const { connect, connectors, isLoading, pendingConnector } = useConnect({
     chainId: 420,
     onError(error: Error) {
@@ -33,7 +32,8 @@ function App() {
 
   useEffect(() => {
     if (isConnected) {
-      setStep(4)
+      // completeStep0()
+      setStep(3)
     }
   }, [isConnected])
 
@@ -42,7 +42,15 @@ function App() {
   }, [step])
 
   
-
+  useContractEvent({
+    address: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    abi: contractABI,
+    eventName: 'MyEvent',
+    chainId:420,
+    listener(log) {
+      console.log(log,'wassssss')
+    },
+  })
   const makeInterval = async function (callbackId:string) {
     console.log('interval started')
     const interval = setInterval(async () => {
@@ -77,7 +85,7 @@ function App() {
 
   const completeStep0 = async function () {
     try {
-      const response = await axios.get(BASEURL + "/request-proofs");
+      const response = await axios.get(BASEURL +`/request-proofs?address=${address}`);
       const _link = response.data.reclaimUrl
       setLink(_link);
       makeInterval(response.data.callbackId);
@@ -126,12 +134,9 @@ function App() {
     <a href={link}>Open Link </a>
   </>
   const step3 = <>
-    <p>Successfully verified you are an employee of {company}</p>
-    <a href="https://duckduckgo.com">Start Gossiping</a>
     <Register identity = {identity} setStep={setStep} setIdentity={setIdentity}/>
   </>
-  const step4 = <Airdrop identity = {identity} userAddrSignal={address!} shouldRender = {true}/>
-  
+  const step4 =<p>Successfully verified your proof</p>
   const steps = [step0, step1, step2, step3, step4]
   return (
     <div className="App">

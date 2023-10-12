@@ -33,9 +33,11 @@ app.get("/request-proofs", async (req, res) => {
     try {
         const db = client.db();
         const callbackCollection = db.collection('codecoin-reclaim');
+        const address = req.query.address as string
         const request = reclaim.requestProofs({
             title: "CodeCoin",
             baseCallbackUrl: callbackUrl,
+            contextAddress:address,
             requestedProofs: [
                 new reclaim.CustomProvider({
                     provider: 'google-login',

@@ -15,7 +15,7 @@ interface ReclaimContractInterface {
     ) external returns (bool);
 }
 
-contract C_GCoin is ERC20 {
+contract TeCON is ERC20 {
     address public owner;
     address public reclaimContractAddress;
     bytes32 public dappId;

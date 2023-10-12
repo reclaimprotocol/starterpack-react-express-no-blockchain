@@ -10,7 +10,8 @@ export function Airdrop({ identity, userAddrSignal, shouldRender }: { identity: 
 
     const [isFullProof, setIsFullProof] = useState(false)
     const [semaphoreProof, setSemaphoreProof] = useState<FullProof>()
-
+    const fullProof = localStorage.getItem('fullProof')
+    console.log( JSON.parse(fullProof!).claimInfo.context,'hhhhhhhhhhh')
     const GCoinAddress = '0x7435F35a5160BAEcC4F364990c4F3f3f70c18c77';
     const semaphoreAddress = "0xACE04E6DeB9567C1B8F37D113F2Da9E690Fc128d";
     const groupNo = 190275525;
