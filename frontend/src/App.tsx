@@ -1,9 +1,8 @@
-import logo from './logo.svg';
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import QRCode from 'react-qr-code';
-import { useAccount, useConnect, useContractEvent, useDisconnect } from 'wagmi';
+import { useAccount, useConnect, useContractEvent } from 'wagmi';
 import { Register } from './components/register.component';
 import transformProof from './utils/transformProof';
 import contractABI from './assets/gcoinABI.json';
@@ -18,9 +17,9 @@ function App() {
   const [company, setCompany] = useState('');
   const [step, setStep] = useState(0);
   const [link, setLink] = useState('');
-  const [identity, setIdentity] = useState<Identity>(new Identity('1'));
   const { address, isConnected } = useAccount();
 
+  //using wagmi to connect wallet
   const { connect, connectors, isLoading, pendingConnector } = useConnect({
     chainId: 420,
     onError(error: Error) {
@@ -30,26 +29,26 @@ function App() {
 
   useEffect(() => {
     if (isConnected) {
-      // completeStep0()
-      setStep(3)
+      setStep(1)
     }
   }, [isConnected])
-
+  //keep track of the step
   useEffect(() => {
     console.log('step', step)
   }, [step])
 
-  
+  //listning to contract's events
   useContractEvent({
     address: '0x003EFcCBe8303d338e944F263a77cBc036Bd9ae8',
     abi: contractABI,
     eventName: 'MyEvent',
-    chainId:420,
+    chainId: 420,
     listener(log) {
-      console.log(log[0],'event---')
+      console.log(log[0], 'event---')
     },
   })
-  const makeInterval = async function (callbackId:string) {
+  /// trying to fetch proof
+  const makeInterval = async function (callbackId: string) {
     console.log('interval started')
     const interval = setInterval(async () => {
       console.log('interval iteration')
@@ -61,13 +60,14 @@ function App() {
     }, 3000)
   }
 
-  const fetchProof = async (callbackId:string) => {
+  const fetchProof = async (callbackId: string) => {
     if (!callbackId) return
     try {
       console.log(`requesting ${BASEURL}/get-proofs?id=${callbackId}`);
       const response = await fetch(`${BASEURL}/get-proofs?id=${callbackId}`);
       if (response.status === 200) {
         const proofData = await response.json();
+        ///storing proof in localstorage after transforming it
         localStorage.setItem('fullProof', JSON.stringify(transformProof(proofData[0])))
         console.log('proof fetched successfully', proofData[0])
         return true
@@ -79,10 +79,9 @@ function App() {
       return false
     }
   }
-
-  const completeStep0 = async function () {
+  const requestProof = async function () {
     try {
-      const response = await axios.get(BASEURL +`/request-proofs?address=${address}`);
+      const response = await axios.get(BASEURL + `/request-proofs?address=${address}`);
       const _link = response.data.reclaimUrl
       setLink(_link);
       makeInterval(response.data.callbackId);
@@ -114,7 +113,7 @@ function App() {
   </>
   const step1 = <>
     <p> Which company do you belong to? </p>
-    <div><input onChange={evt => setCompany(evt.target.value)} /><input type="submit" onClick={() => { completeStep0() }} /></div>
+    <div><input onChange={evt => setCompany(evt.target.value)} /><input type="submit" onClick={() => { requestProof() }} /></div>
   </>
   const step2 = <>
     <p> Scan the QR code or visit the below link to prove you are an employee of {company} </p>
@@ -131,9 +130,10 @@ function App() {
     <a href={link}>Open Link </a>
   </>
   const step3 = <>
-    <Register identity = {identity} setStep={setStep} setIdentity={setIdentity}/>
+    <Register setStep={setStep} />
   </>
-  const step4 =<p>Successfully verified your proof</p>
+  const step4 = <p>Successfully verified your proof</p>
+
   const steps = [step0, step1, step2, step3, step4]
   return (
     <div className="App">

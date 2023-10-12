@@ -40,7 +40,7 @@ contract Testing {
         string memory str,
         uint256 startIndex,
         uint256 endIndex
-    ) public pure returns (string memory) {
+    ) internal pure returns (string memory) {
         bytes memory strBytes = bytes(str);
         bytes memory result = new bytes(endIndex - startIndex);
         for (uint256 i = startIndex; i < endIndex; i++) {
@@ -50,7 +50,7 @@ contract Testing {
     }
 
     function getContextMessageFromProof(Proof memory proof)
-        public
+        internal
         pure
         returns (string memory)
     {
@@ -58,7 +58,7 @@ contract Testing {
         return substring(context, 19, 61);
     }
 
-    function stringToAddress(string memory str) public pure returns (address) {
+    function stringToAddress(string memory str) internal pure returns (address) {
         bytes memory data = bytes(str);
         uint160 result = 0;
         for (uint8 i = 2; i < 42; i++) {

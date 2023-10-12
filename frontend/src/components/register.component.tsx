@@ -1,24 +1,18 @@
 import { useEffect, useState } from "react";
-import { useContractEvent, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 import contractABI from '../assets/gcoinABI.json';
 import { Identity } from "@semaphore-protocol/identity";
-import { isLabelWithInternallyDisabledControl } from "@testing-library/user-event/dist/utils";
 
 
-export function Register({ setStep, identity, setIdentity }
+export function Register({ setStep }
     :
     {
-        setStep: (step: number) => void,
-        identity: Identity | undefined,
-        setIdentity: (identity: Identity) => void
+        setStep: (step: number) => void
     }) {
-
-
-
-    const [isPrepared, setIsPrepared] = useState(false);
     const [fullProof, setFullProof] = useState();
     const [isLoading, setIsLoading] = useState(false)
 
+    ///getting the fullproof from localstorage
     useEffect(() => {
         const storedFullProof = localStorage.getItem('fullProof');
         if (storedFullProof) {
@@ -28,27 +22,23 @@ export function Register({ setStep, identity, setIdentity }
         }
     }, [])
 
-
-
-    console.log('identity', identity)
+    ///preparing for contract writing
     const { config } = usePrepareContractWrite({
-        enabled: !!identity || !!fullProof,
+        enabled:!!fullProof,
         address: "0x003EFcCBe8303d338e944F263a77cBc036Bd9ae8",
         abi: contractABI,
         functionName: 'emitEvent',
-        args: [
-            fullProof],
+        args: [fullProof],
         chainId: 420,
         onSuccess(data) {
-            console.log(identity);
             console.log('Successful - register prepare: ', data);
-            setIsPrepared(true);
         },
         onError(error) {
             console.log('Error in verify Proof: ', error)
         }
     });
     const contractWrite = useContractWrite(config);
+
     useEffect(() => {
         async function completeStep() {
             setTimeout(() => {
@@ -60,12 +50,9 @@ export function Register({ setStep, identity, setIdentity }
             completeStep()
         }
     }, [contractWrite.isSuccess])
-    useEffect(() => {
-        console.log(isLoading, 'wasssss')
-    }, [isLoading])
+
     return (
         <>
-
             <div className='button-container'>
                 {!contractWrite.isSuccess &&
                     <button
@@ -73,12 +60,9 @@ export function Register({ setStep, identity, setIdentity }
                         onClick={() => {
                             contractWrite.write?.()
                         }}
-                    // disabled={contractWrite.isLoading || contractWrite.isSuccess || !isPrepared}
                     >
                         Verify Reclaim Proof
                     </button>
-
-
                 }
                 {(contractWrite.isLoading || isLoading) && <div className='loading-spinner' />}
             </div>

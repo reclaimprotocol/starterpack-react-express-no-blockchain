@@ -136,11 +136,6 @@ app.listen(port, async () => {
     try {
         await client.connect();
         console.log('Connected to mongoDB.');
-        // if (groupCreated.includes("false")) {
-        //     const tx = await semaphoreContract.createGroup(groupNo, merkleTreeDepth, publicAddress);
-        //     const receipt = await tx.wait();
-        //     console.log(receipt);
-        // }
     } catch (error) {
         console.error('Exiting. Failed to connect to mongoDB with error:', error, );
         process.exit(1);
